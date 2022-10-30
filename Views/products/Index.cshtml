@@ -1,0 +1,281 @@
+﻿@model IEnumerable<Homework_Assignment_6.Models.product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<h2>Products</h2>
+<div class="row">
+    <div class="col-md-3">
+        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary" id="searching" onclick="Search()">Search</button>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Create</button><br /><br />
+    </div>
+</div>
+<br />
+<table class="table" id="mTable">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Year
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Brand
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+               Edit
+            </th>
+            <th>
+                Details
+            </th>
+            <th>
+               Delete
+            </th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.product_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.model_year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.list_price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.brand.brand_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.category.category_name)
+                </td>
+
+                <td><button class='btn btn-primary'  onclick="EditProduct(@item.product_id)" args="'+ @item.product_id +'"  data-toggle="modal" data-target="#updateModal">Edit</button></td>
+
+                <td><button class='btn btn-info' onclick='DetailsProduct(@item.product_id);'>Details</button></td>
+
+                <td><button class='btn btn-danger' args="'+ @item.product_id +'" onclick="Delele(@item.product_id)">Delete</button></td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Update Products</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="ProductName">ProductName</label>
+                        <input type="text" class="form-control" id="ProductName" placeholder="ProductName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="BrandId">Brand</label>
+                        @Html.DropDownList("brand_id", null, htmlAttributes: new { @class = "form-control" })
+           
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">Category</label>
+                        @Html.DropDownList("category_id", null, htmlAttributes: new { @class = "form-control" })
+                   
+                    </div>
+                    <div class="form-group">
+                        <label for="ModelYear">Model Year</label>
+                        <input type="text" class="form-control" id="ModelYear" placeholder="2022" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Price">Price R:</label>
+                        <input type="text" class="form-control" id="Price" placeholder="00" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnUpdate" onclick="Edit();">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Products</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="ProductName">ProductName</label>
+                        <input type="text" class="form-control" id="ProductName" placeholder="ProductName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="BrandId">Brand</label>
+                        @Html.DropDownList("brand_id", null, htmlAttributes: new { @class = "form-control" })
+                       
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">Category</label>
+                        @Html.DropDownList("category_id", null, htmlAttributes: new { @class = "form-control" })
+                 
+                    </div>
+                    <div class="form-group">
+                        <label for="ModelYear">Model Year</label>
+                        <input type="text" class="form-control" id="ModelYear" placeholder="2022" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Price">Price R:</label>
+                        <input type="text" class="form-control" id="Price" placeholder="00" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+   
+    function Delele(ID) {
+        var ans = confirm("Are you sure you want to delete this Record?");
+
+        if (ans) {
+            $.ajax({
+                url: "/Products/Delete/" + ID,
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    alert("successfully deleted");
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    }
+
+  
+    function Search() {
+        var value = $("#myInput").val().toLowerCase();
+        $("#myTable tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    }
+    var IsNew = true;
+    function Add() {
+        var url = "";
+        var data = "";
+        var method;
+        if (IsNew == true) {
+            url = "/products/Store";
+            data = "{product_name:'" + $('#ProductName').val() + "',model_year: '" + $('#ModelYear').val() + "',list_price: '" + $('#Price').val() + "',brand_id: '" + $('#brand_id').val() + "',category_id: '" + $('#category_id').val() + "'}";
+            method = "POST";
+        }
+        $.ajax({
+            type: method,
+            url: url,
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: function (data) {
+                if (IsNew) {
+                    $('#myModal').modal('hide');
+                    alert("successfully added");
+                }
+            }
+        });
+    }
+    var ID 
+    function EditProduct(id) {
+        alert(id);
+        ID= id;
+        $.ajax({
+            type: 'GET',
+            url: "/Products/getProduct/" + id,
+            contentType: "application/json; charset=utf-8",
+            dataType: 'JSON',
+            success: function (data) {
+                ID = data.poduct_id;
+                $('#ProductName').val(data.product_name);
+                $('#ModelYear').val(data.model_year);
+                $('#Price').val(data.list_price);
+                $('#brand_id').val(data.brand_id);
+                $('#category_id').val(data.category_id);
+            },
+            error: function (data) {
+                ID = data.poduct_id;
+                $('#ProductName').val(data.product_name);
+                $('#ModelYear').val(data.model_year);
+                $('#Price').val(data.list_price);
+                $('#brand_id').val(data.brand_id);
+                $('#category_id').val(data.category_id);
+            }
+        })
+       
+    }
+    function Edit() {
+        UpdateProduct(ID);
+    }
+    function UpdateProduct(ID) {
+
+        var Obj = {
+            product_id: ID,
+            product_name: $('#ProductName').val(),
+            model_year: $('#ModelYear').val(),
+            list_price: $('#Price').val(),
+            brand_id: $('#brand_id').val(),
+            category_id: $('#category_id').val(),
+        };
+        $.ajax({
+            url: "/Products/UpdateProduct",
+            data: JSON.stringify(Obj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                
+                $('#myModal').modal('hide');
+                $('#ProductName').val("");
+                $('#ModelYear').val("");
+                $('#Price').val("");
+                $('#brand_id').val("");
+                $('#category_id').val("");
+            },
+            error: function (errormessage) {
+                $('#updateModal').modal('hide');
+                $('#ProductName').val("");
+                $('#ModelYear').val("");
+                $('#Price').val("");
+                $('#brand_id').val("");
+                $('#category_id').val("");
+                alert("update successful")
+            }
+        });
+    }
+</script>
+<link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+<script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>

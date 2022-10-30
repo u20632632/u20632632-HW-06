@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Homework_Assignment_6.Models.order_items>
+
+@{
+    ViewBag.Title = "Index";
+}
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap" />
+    <script src="https://kit.fontawesome.com/2745e261bc.js"></script>
+</head>
+<body>
+    <h2>Orders</h2>
+    @for (int o = 1; o < 1616; o++)
+    {
+        double TotalPrice = 0;
+        string Year = "2016/01/01";
+        <div class="row">
+            <div class="col-md-6">
+                <h2> Order No. @o - @Year</h2>
+            </div>
+        </div>
+        <br />
+        <table class="table">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Discount
+                </th>
+
+                <th>
+                    Order ID
+                </th>
+                <th>
+                    Total
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+
+                if (item.order_id == o)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.product.product_name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.list_price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.discount)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.order.order_id)
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    TotalPrice += (double)item.list_price;
+                    Year =Convert.ToString(item.order.order_date);
+
+                }
+
+            }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    Total
+                </td>
+                <td>
+                    @TotalPrice
+                </td>
+            </tr>
+        </table>
+        <br />
+        <br />
+        TotalPrice = 0;
+    }
+</body>
